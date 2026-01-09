@@ -7,18 +7,30 @@ export function useAuth() {
 
   const loginMutation = useMutation({
     mutationFn: async (password: string) => {
-      const res = await fetch(api.auth.login.path, {
-        method: api.auth.login.method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
+      try {
+        const res = await fetch(api.auth.login.path, {
+          method: api.auth.login.method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password }),
+        });
 
-      if (!res.ok) {
-        if (res.status === 401) throw new Error("Incorrect password");
-        throw new Error("Login failed");
+        const data = await res.json().catch(() => ({}));
+        
+        if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error(data.message || "Incorrect password");
+          }
+          throw new Error(data.message || `Login failed (${res.status})`);
+        }
+
+        return api.auth.login.responses[200].parse(data);
+      } catch (error: any) {
+        console.error('Login error:', error);
+        if (error.message) {
+          throw error;
+        }
+        throw new Error("Network error - please check your connection");
       }
-
-      return api.auth.login.responses[200].parse(await res.json());
     },
     onSuccess: (data) => {
       if (data.success) {
