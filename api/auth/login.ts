@@ -46,7 +46,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
   
   try {
-    await initializeStorage();
+    // Initialize storage first
+    try {
+      await initializeStorage();
+    } catch (storageError: any) {
+      console.error('Storage initialization error:', storageError);
+      return res.status(500).json({ 
+        message: "Storage initialization failed",
+        error: storageError?.message 
+      });
+    }
     
     if (req.method !== 'POST') {
       return res.status(405).json({ message: 'Method not allowed', received: req.method });
@@ -56,7 +65,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log('Login request received:', {
       method: req.method,
       url: req.url,
-      body: req.body
+      hasBody: !!req.body,
+      bodyType: typeof req.body
     });
     
     // Parse body - Vercel automatically parses JSON, but handle both cases
@@ -73,13 +83,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     
     // If body is undefined or null, return error
-    if (!body) {
-      console.error('Request body is empty');
-      return res.status(400).json({ message: "Request body is required" });
+    if (!body || (typeof body === 'object' && Object.keys(body).length === 0)) {
+      console.error('Request body is empty or invalid');
+      return res.status(400).json({ message: "Request body is required", received: body });
     }
     
     // Validate input
-    const parsed = api.auth.login.input.safeParse(body);
+    let parsed;
+    try {
+      parsed = api.auth.login.input.safeParse(body);
+    } catch (parseError: any) {
+      console.error('Parse error:', parseError);
+      return res.status(400).json({ 
+        message: "Failed to parse request",
+        error: parseError?.message 
+      });
+    }
+    
     if (!parsed.success) {
       console.error('Validation error:', parsed.error);
       return res.status(400).json({ 
@@ -89,18 +109,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     
     const { password } = parsed.data;
-    console.log('Password received:', password ? '***' : 'empty');
+    console.log('Password received, length:', password?.length || 0);
     
-    // Check password
-    if (password === "Ashu2008@") {
-      const ip = getClientIp(req);
-      const userAgent = req.headers['user-agent'] || '';
-      const device = detectDevice(userAgent);
-      await storage.addSecurityLog('Successful Login', device, ip);
-      console.log('Login successful');
-      return res.status(200).json({ success: true });
+    // Check password - be explicit about comparison
+    const correctPassword = "Ashu2008@";
+    if (password === correctPassword) {
+      try {
+        const ip = getClientIp(req);
+        const userAgent = req.headers['user-agent'] || '';
+        const device = detectDevice(userAgent);
+        await storage.addSecurityLog('Successful Login', device, ip);
+        console.log('Login successful');
+        return res.status(200).json({ success: true });
+      } catch (logError: any) {
+        console.error('Error logging security event:', logError);
+        // Still return success even if logging fails
+        return res.status(200).json({ success: true });
+      }
     } else {
-      console.error('Invalid password attempt');
+      console.error('Invalid password attempt. Expected length:', correctPassword.length, 'Got length:', password?.length);
       return res.status(401).json({ message: "Invalid password" });
     }
   } catch (e: any) {
@@ -108,7 +135,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('Error stack:', e?.stack);
     return res.status(500).json({ 
       message: "Internal server error",
-      error: process.env.NODE_ENV === 'development' ? e?.message : undefined
+      error: e?.message || String(e)
     });
   }
 }
