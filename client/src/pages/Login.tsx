@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import logoImg from "@assets/image_1767963767146.png";
 
 export default function Login() {
   const [password, setPassword] = useState("");
@@ -45,9 +46,9 @@ export default function Login() {
           <motion.div 
             initial={{ y: -20 }}
             animate={{ y: 0 }}
-            className="w-24 h-24 bg-gradient-to-tr from-primary to-blue-400 rounded-3xl shadow-2xl shadow-primary/30 flex items-center justify-center mx-auto rotate-3"
+            className="w-24 h-24 rounded-3xl shadow-2xl shadow-primary/30 flex items-center justify-center mx-auto overflow-hidden rotate-3"
           >
-            <ShieldCheck className="w-12 h-12 text-white" strokeWidth={1.5} />
+            <img src={logoImg} alt="Logo" className="w-full h-full object-cover" />
           </motion.div>
           <div>
             <h1 className="text-4xl font-bold font-display tracking-tight text-white mb-2">

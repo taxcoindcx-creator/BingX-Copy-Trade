@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { useCurrency } from "@/hooks/use-currency";
 
 export default function Settings() {
-  const [isUSD, setIsUSD] = useState(true);
+  const { currency, setCurrency } = useCurrency();
   const [activeModal, setActiveModal] = useState<"privacy" | "terms" | "about" | null>(null);
 
   return (
@@ -30,25 +31,25 @@ export default function Settings() {
                 </div>
                 <div>
                   <p className="font-bold text-sm tracking-tight">Base Currency</p>
-                  <p className="text-xs text-zinc-500">Currently: {isUSD ? "US Dollar ($)" : "Indian Rupee (₹)"}</p>
+                  <p className="text-xs text-zinc-500">Currently: {currency === "USD" ? "US Dollar ($)" : "Indian Rupee (₹)"}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <AnimatePresence mode="wait">
                   <motion.span 
-                    key={isUSD ? "USD" : "INR"}
+                    key={currency}
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -5 }}
                     className="text-[10px] font-black text-primary bg-primary/10 px-2.5 py-1 rounded-md tracking-widest"
                   >
-                    {isUSD ? "USD" : "INR"}
+                    {currency}
                   </motion.span>
                 </AnimatePresence>
                 <Switch 
                     id="currency-mode" 
-                    checked={!isUSD} 
-                    onCheckedChange={(checked) => setIsUSD(!checked)} 
+                    checked={currency === "INR"} 
+                    onCheckedChange={(checked) => setCurrency(checked ? "INR" : "USD")} 
                     className="data-[state=checked]:bg-primary"
                 />
               </div>

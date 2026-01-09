@@ -102,7 +102,7 @@ export default function Profile() {
           </DialogHeader>
           <div className="space-y-4">
             <InfoRow icon={<UserIcon size={16} />} label="Full Name" value="Abhisek Das" />
-            <InfoRow icon={<Calendar size={16} />} label="Date of Birth" value="12 Oct 1998" />
+            <InfoRow icon={<Calendar size={16} />} label="Date of Birth" value="****" />
             <InfoRow icon={<Globe size={16} />} label="Country" value="India (IN)" />
             <InfoRow icon={<CreditCard size={16} />} label="Identity Document" value="Aadhar Card (Verified)" />
             <InfoRow icon={<Shield size={16} />} label="Tax ID / PAN" value="••••••921Z" />

@@ -6,10 +6,29 @@ import { usePortfolio } from "@/hooks/use-portfolio";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/hooks/use-currency";
+import { useEffect } from "react";
 
 export default function Home() {
   const [showBalance, setShowBalance] = useState(true);
   const { data: portfolio, isLoading } = usePortfolio();
+  const { format, currency } = useCurrency();
+  const [cryptoPrices, setCryptoPrices] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin&vs_currencies=usd&include_24hr_change=true");
+        const data = await res.json();
+        setCryptoPrices(data);
+      } catch (err) {
+        console.error("Failed to fetch crypto prices", err);
+      }
+    };
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const container = {
     hidden: { opacity: 0 },
@@ -84,7 +103,7 @@ export default function Home() {
                         animate={{ opacity: 1, scale: 1 }}
                         className="text-5xl font-black font-display tracking-tighter bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent"
                       >
-                        ${data.totalValue.toLocaleString()}
+                        {format(data.totalValue)}
                       </motion.h2>
                     ) : (
                       <motion.h2 
@@ -109,7 +128,7 @@ export default function Home() {
                 <div className="px-3 py-1 rounded-full bg-[#4ade80]/10 border border-[#4ade80]/20 text-[#4ade80] text-[10px] font-black tracking-widest uppercase mb-2">
                   Live
                 </div>
-                <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">USD Account</div>
+                <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{currency} Account</div>
               </div>
             </div>
 
@@ -117,14 +136,14 @@ export default function Home() {
               <div>
                 <p className="text-zinc-500 text-[9px] font-black uppercase tracking-[0.2em] mb-1.5">Net PnL (Total)</p>
                 <p className="text-2xl font-black text-[#4ade80] flex items-center gap-1.5 tracking-tighter">
-                  +${data.netPnL.toLocaleString()} 
+                  {format(data.netPnL)} 
                   <span className="text-xs bg-[#4ade80]/20 px-1.5 py-0.5 rounded-md">+{( (data.netPnL/data.initialDeposit)*100 ).toFixed(1)}%</span>
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-zinc-500 text-[9px] font-black uppercase tracking-[0.2em] mb-1.5">All Time Profit</p>
                 <p className="text-2xl font-black text-white tracking-tighter">
-                  ${data.allTimeProfit.toLocaleString()}
+                  {format(data.allTimeProfit)}
                 </p>
               </div>
             </div>
@@ -132,7 +151,7 @@ export default function Home() {
             <div className="mt-6 flex justify-between items-center px-2">
                <div className="flex items-center gap-2">
                  <div className="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse" />
-                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Initial: ${data.initialDeposit}</span>
+                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Initial: {format(data.initialDeposit)}</span>
                </div>
                <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Master Trader</span>
             </div>
@@ -142,10 +161,10 @@ export default function Home() {
 
       {/* Crypto Prices Grid */}
       <div className="grid grid-cols-2 gap-3 px-1">
-        <CryptoPriceCard symbol="BTC" name="Bitcoin" price="96,482.50" change="+2.4%" color="#f7931a" />
-        <CryptoPriceCard symbol="ETH" name="Ethereum" price="2,482.15" change="-0.8%" color="#627eea" />
-        <CryptoPriceCard symbol="SOL" name="Solana" price="142.85" change="+5.2%" color="#14f195" />
-        <CryptoPriceCard symbol="BNB" name="Binance" price="612.40" change="+1.1%" color="#f3ba2f" />
+        <CryptoPriceCard symbol="BTC" name="Bitcoin" price={cryptoPrices?.bitcoin?.usd?.toLocaleString() || "..."} change={(cryptoPrices?.bitcoin?.usd_24h_change > 0 ? "+" : "") + (cryptoPrices?.bitcoin?.usd_24h_change?.toFixed(2) || "0.00") + "%"} color="#f7931a" />
+        <CryptoPriceCard symbol="ETH" name="Ethereum" price={cryptoPrices?.ethereum?.usd?.toLocaleString() || "..."} change={(cryptoPrices?.ethereum?.usd_24h_change > 0 ? "+" : "") + (cryptoPrices?.ethereum?.usd_24h_change?.toFixed(2) || "0.00") + "%"} color="#627eea" />
+        <CryptoPriceCard symbol="SOL" name="Solana" price={cryptoPrices?.solana?.usd?.toLocaleString() || "..."} change={(cryptoPrices?.solana?.usd_24h_change > 0 ? "+" : "") + (cryptoPrices?.solana?.usd_24h_change?.toFixed(2) || "0.00") + "%"} color="#14f195" />
+        <CryptoPriceCard symbol="BNB" name="Binance" price={cryptoPrices?.binancecoin?.usd?.toLocaleString() || "..."} change={(cryptoPrices?.binancecoin?.usd_24h_change > 0 ? "+" : "") + (cryptoPrices?.binancecoin?.usd_24h_change?.toFixed(2) || "0.00") + "%"} color="#f3ba2f" />
       </div>
 
       {/* Stats Grid */}
