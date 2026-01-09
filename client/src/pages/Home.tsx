@@ -62,75 +62,89 @@ export default function Home() {
 
       {/* Portfolio Card */}
       <motion.div variants={item} className="w-full">
-        <div className="relative overflow-hidden rounded-3xl bg-[#0a0a0c] p-1 shadow-2xl shadow-black/50 border border-white/5">
-          {/* Subtle Pattern Overlay */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-[#0a0a0c] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/5 group">
+          {/* Animated Background Glow */}
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-[100px] animate-pulse group-hover:bg-primary/30 transition-all duration-700" />
+          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] animate-pulse delay-700 group-hover:bg-blue-500/20 transition-all duration-700" />
           
-          <div className="relative bg-gradient-to-br from-zinc-900/50 to-black/50 backdrop-blur-md rounded-[22px] p-6 text-white overflow-hidden">
-            <div className="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
-            
-            <div className="flex justify-between items-start mb-6">
+          <div className="relative bg-gradient-to-br from-zinc-900/80 via-black/90 to-zinc-900/80 backdrop-blur-2xl rounded-[2.2rem] p-8 text-white overflow-hidden border border-white/10">
+            <div className="flex justify-between items-start mb-8">
               <div>
-                <p className="text-zinc-400 font-medium mb-1 flex items-center gap-2 text-xs uppercase tracking-widest">
-                  <Wallet className="w-3.5 h-3.5 text-primary" /> Total Portfolio Value
+                <p className="text-zinc-500 font-black mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em]">
+                  <Wallet className="w-3.5 h-3.5 text-primary" /> Net Portfolio Balance
                 </p>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <AnimatePresence mode="wait">
                     {showBalance ? (
                       <motion.h2 
                         key="balance"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="text-4xl font-bold font-display tracking-tight text-gradient"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-5xl font-black font-display tracking-tighter bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent"
                       >
                         ${data.totalValue.toLocaleString()}
-                        <span className="text-lg font-normal text-zinc-500 ml-1">USD</span>
                       </motion.h2>
                     ) : (
                       <motion.h2 
                         key="hidden"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="text-4xl font-bold font-display tracking-tight text-zinc-700"
+                        className="text-5xl font-black font-display tracking-tighter text-zinc-800"
                       >
                         •••••••
                       </motion.h2>
                     )}
                   </AnimatePresence>
-                  <button 
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
                     onClick={() => setShowBalance(!showBalance)}
-                    className="p-2 rounded-full hover:bg-white/5 transition-colors"
+                    className="h-10 w-10 rounded-full bg-white/5 hover:bg-white/10 transition-all border border-white/5"
                   >
-                    {showBalance ? <Eye size={18} className="text-zinc-500" /> : <EyeOff size={18} className="text-zinc-500" />}
-                  </button>
+                    {showBalance ? <EyeOff size={18} className="text-zinc-400" /> : <Eye size={18} className="text-zinc-400" />}
+                  </Button>
                 </div>
+              </div>
+              <div className="flex flex-col items-end">
+                <div className="px-3 py-1 rounded-full bg-[#4ade80]/10 border border-[#4ade80]/20 text-[#4ade80] text-[10px] font-black tracking-widest uppercase mb-2">
+                  Live
+                </div>
+                <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">USD Account</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/5">
+            <div className="grid grid-cols-2 gap-6 mt-4 p-6 bg-white/[0.03] rounded-3xl border border-white/5">
               <div>
-                <p className="text-zinc-500 text-[10px] uppercase tracking-wider mb-1">Net PnL</p>
-                <p className="text-xl font-bold text-[#4ade80] flex items-center gap-1">
-                  +${data.netPnL.toLocaleString()} <ArrowUpRight className="w-4 h-4" />
+                <p className="text-zinc-500 text-[9px] font-black uppercase tracking-[0.2em] mb-1.5">Net PnL (Total)</p>
+                <p className="text-2xl font-black text-[#4ade80] flex items-center gap-1.5 tracking-tighter">
+                  +${data.netPnL.toLocaleString()} 
+                  <span className="text-xs bg-[#4ade80]/20 px-1.5 py-0.5 rounded-md">+{( (data.netPnL/data.initialDeposit)*100 ).toFixed(1)}%</span>
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-zinc-500 text-[10px] uppercase tracking-wider mb-1">All Time Profit</p>
-                <p className="text-xl font-bold text-white">
+                <p className="text-zinc-500 text-[9px] font-black uppercase tracking-[0.2em] mb-1.5">All Time Profit</p>
+                <p className="text-2xl font-black text-white tracking-tighter">
                   ${data.allTimeProfit.toLocaleString()}
                 </p>
               </div>
             </div>
             
-            <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center text-[10px] font-medium text-zinc-500 uppercase tracking-widest">
-               <span>Initial Deposit: ${data.initialDeposit}</span>
-               <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full border border-primary/20">Verified</span>
+            <div className="mt-6 flex justify-between items-center px-2">
+               <div className="flex items-center gap-2">
+                 <div className="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse" />
+                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Initial: ${data.initialDeposit}</span>
+               </div>
+               <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Master Trader</span>
             </div>
           </div>
         </div>
       </motion.div>
+
+      {/* Crypto Prices Grid */}
+      <div className="grid grid-cols-2 gap-3 px-1">
+        <CryptoPriceCard symbol="BTC" name="Bitcoin" price="96,482.50" change="+2.4%" color="#f7931a" />
+        <CryptoPriceCard symbol="ETH" name="Ethereum" price="2,482.15" change="-0.8%" color="#627eea" />
+        <CryptoPriceCard symbol="SOL" name="Solana" price="142.85" change="+5.2%" color="#14f195" />
+        <CryptoPriceCard symbol="BNB" name="Binance" price="612.40" change="+1.1%" color="#f3ba2f" />
+      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-4">
@@ -186,5 +200,44 @@ function HomeSkeleton() {
         <Skeleton className="h-32 bg-secondary rounded-2xl col-span-2" />
       </div>
     </div>
+  );
+}
+
+function CryptoPriceCard({ symbol, name, price, change, color }: { symbol: string, name: string, price: string, change: string, color: string }) {
+  const isUp = change.startsWith("+");
+  return (
+    <motion.div 
+      whileHover={{ y: -5 }}
+      className="bg-zinc-900/40 border border-white/5 p-4 rounded-3xl backdrop-blur-sm relative overflow-hidden group"
+    >
+      <div className="absolute top-0 right-0 w-16 h-16 bg-white/[0.02] rounded-bl-[2rem] -mr-4 -mt-4 transition-all group-hover:bg-white/[0.05]" />
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black" style={{ backgroundColor: `${color}20`, color }}>
+          {symbol[0]}
+        </div>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{symbol}</p>
+          <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-tighter">{name}</p>
+        </div>
+      </div>
+      <p className="text-lg font-black tracking-tighter text-white">${price}</p>
+      <div className="flex items-center justify-between mt-1">
+        <span className={cn("text-[10px] font-black tracking-widest px-2 py-0.5 rounded-md", isUp ? "bg-[#4ade80]/10 text-[#4ade80]" : "bg-red-500/10 text-red-500")}>
+          {change}
+        </span>
+        <div className="w-12 h-6 opacity-30">
+           {/* Mini sparkline placeholder */}
+           <svg viewBox="0 0 100 40" className="w-full h-full">
+             <path 
+               d={isUp ? "M0,35 L20,30 L40,32 L60,20 L80,25 L100,5" : "M0,5 L20,15 L40,10 L60,25 L80,22 L100,35"} 
+               fill="none" 
+               stroke={isUp ? "#4ade80" : "#ef4444"} 
+               strokeWidth="6" 
+               strokeLinecap="round"
+             />
+           </svg>
+        </div>
+      </div>
+    </motion.div>
   );
 }

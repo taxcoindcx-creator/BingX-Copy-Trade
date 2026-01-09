@@ -1,13 +1,16 @@
-import { motion } from "framer-motion";
-import { Mail, CheckCircle2, Shield, ChevronRight, LogOut, Phone, User as UserIcon } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mail, CheckCircle2, Shield, ChevronRight, LogOut, Phone, User as UserIcon, Calendar, Globe, CreditCard, History as HistoryIcon, MapPin, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Profile() {
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
+  const [activeDialog, setActiveDialog] = useState<"personal" | "security" | null>(null);
 
   const handleContact = () => {
     toast({
@@ -57,8 +60,12 @@ export default function Profile() {
             <h3 className="font-bold text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Account Management</h3>
           </div>
           <div className="divide-y divide-white/5">
-            <ProfileItem icon={<UserIcon />} label="Personal Information" />
-            <ProfileItem icon={<Shield />} label="Security & Login" />
+            <div onClick={() => setActiveDialog("personal")}>
+              <ProfileItem icon={<UserIcon />} label="Personal Information" />
+            </div>
+            <div onClick={() => setActiveDialog("security")}>
+              <ProfileItem icon={<Shield />} label="Security & Login" />
+            </div>
             <ProfileItem icon={<Phone />} label="Two-Factor Authentication" value="Enabled" />
           </div>
         </div>
@@ -71,7 +78,7 @@ export default function Profile() {
             <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
               <Mail size={20} />
             </div>
-            <span className="font-bold text-sm tracking-tight">Contact Admin</span>
+            <span className="font-bold text-sm tracking-tight text-zinc-300">Contact Admin</span>
           </span>
           <ChevronRight className="text-zinc-600 group-hover:translate-x-1 transition-transform" />
         </Button>
@@ -85,7 +92,72 @@ export default function Profile() {
           Sign Out
         </Button>
       </div>
+
+      {/* Dialogs */}
+      <Dialog open={activeDialog === "personal"} onOpenChange={() => setActiveDialog(null)}>
+        <DialogContent className="max-w-md w-[95%] rounded-[2rem] bg-zinc-950 border-white/5 p-6 backdrop-blur-2xl">
+          <DialogHeader className="mb-6">
+            <DialogTitle className="text-2xl font-black font-display tracking-tight text-white">Personal Information</DialogTitle>
+            <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-1">Non-editable verified profile</p>
+          </DialogHeader>
+          <div className="space-y-4">
+            <InfoRow icon={<UserIcon size={16} />} label="Full Name" value="Abhisek Das" />
+            <InfoRow icon={<Calendar size={16} />} label="Date of Birth" value="12 Oct 1998" />
+            <InfoRow icon={<Globe size={16} />} label="Country" value="India (IN)" />
+            <InfoRow icon={<CreditCard size={16} />} label="Identity Document" value="Aadhar Card (Verified)" />
+            <InfoRow icon={<Shield size={16} />} label="Tax ID / PAN" value="••••••921Z" />
+          </div>
+          <p className="mt-8 text-[10px] text-zinc-600 font-bold text-center uppercase tracking-[0.2em] leading-relaxed">
+            All personal information is secured and cannot be modified after KYC verification.
+          </p>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={activeDialog === "security"} onOpenChange={() => setActiveDialog(null)}>
+        <DialogContent className="max-w-md w-[95%] rounded-[2rem] bg-zinc-950 border-white/5 p-6 backdrop-blur-2xl">
+          <DialogHeader className="mb-6">
+            <DialogTitle className="text-2xl font-black font-display tracking-tight text-white">Security Logs</DialogTitle>
+            <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-1">Recent Account Activities</p>
+          </DialogHeader>
+          <div className="space-y-4">
+            <LogEntry date="Today, 12:45 PM" action="Successful Login" device="iPhone 15 Pro • IP: 103.24.***" />
+            <LogEntry date="Yesterday, 09:12 PM" action="Two-Factor Verified" device="Mobile App • Kolkata, IN" />
+            <LogEntry date="07 Jan 2026, 11:20 AM" action="API Key Created" device="Desktop Browser • Chrome/Win" />
+            <LogEntry date="05 Jan 2026, 04:30 PM" action="Password Changed" device="iPhone 15 Pro • IP: 103.24.***" />
+          </div>
+          <Button variant="ghost" className="w-full mt-4 text-[10px] font-black uppercase tracking-widest text-primary">
+            View All Logs
+          </Button>
+        </DialogContent>
+      </Dialog>
     </motion.div>
+  );
+}
+
+function InfoRow({ icon, label, value }: { icon: any, label: string, value: string }) {
+  return (
+    <div className="flex items-center justify-between p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+      <div className="flex items-center gap-3">
+        <div className="text-zinc-600">{icon}</div>
+        <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{label}</span>
+      </div>
+      <span className="text-sm font-bold text-zinc-200">{value}</span>
+    </div>
+  );
+}
+
+function LogEntry({ date, action, device }: { date: string, action: string, device: string }) {
+  return (
+    <div className="p-4 bg-white/[0.02] rounded-2xl border border-white/5 flex gap-4">
+      <div className="p-2 h-fit bg-primary/10 rounded-xl text-primary">
+        <Key size={16} />
+      </div>
+      <div>
+        <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-1">{date}</p>
+        <p className="text-sm font-bold text-zinc-200">{action}</p>
+        <p className="text-xs text-zinc-500 mt-0.5">{device}</p>
+      </div>
+    </div>
   );
 }
 

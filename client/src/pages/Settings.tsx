@@ -1,11 +1,15 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { DollarSign, FileText, Info, Smartphone, Moon, Globe, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { DollarSign, FileText, Info, Smartphone, Moon, Globe, ChevronRight, X } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 
 export default function Settings() {
   const [isUSD, setIsUSD] = useState(true);
+  const [activeModal, setActiveModal] = useState<"privacy" | "terms" | "about" | null>(null);
 
   return (
     <div className="space-y-8 pb-24 pt-4 px-2 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -26,17 +30,25 @@ export default function Settings() {
                 </div>
                 <div>
                   <p className="font-bold text-sm tracking-tight">Base Currency</p>
-                  <p className="text-xs text-zinc-500">Amounts shown in {isUSD ? "US Dollar" : "Indian Rupee"}</p>
+                  <p className="text-xs text-zinc-500">Currently: {isUSD ? "US Dollar ($)" : "Indian Rupee (₹)"}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-[10px] font-black text-zinc-600 bg-zinc-800/50 px-2 py-1 rounded-md">
+                <AnimatePresence mode="wait">
+                  <motion.span 
+                    key={isUSD ? "USD" : "INR"}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="text-[10px] font-black text-primary bg-primary/10 px-2.5 py-1 rounded-md tracking-widest"
+                  >
                     {isUSD ? "USD" : "INR"}
-                </span>
+                  </motion.span>
+                </AnimatePresence>
                 <Switch 
                     id="currency-mode" 
-                    checked={isUSD} 
-                    onCheckedChange={setIsUSD} 
+                    checked={!isUSD} 
+                    onCheckedChange={(checked) => setIsUSD(!checked)} 
                     className="data-[state=checked]:bg-primary"
                 />
               </div>
@@ -49,7 +61,7 @@ export default function Settings() {
                 </div>
                 <div>
                   <p className="font-bold text-sm tracking-tight">Dark Mode</p>
-                  <p className="text-xs text-zinc-500">Optimized for low light</p>
+                  <p className="text-xs text-zinc-500">Default high-contrast theme</p>
                 </div>
               </div>
               <Switch checked={true} disabled className="data-[state=checked]:bg-primary/50" />
@@ -61,9 +73,15 @@ export default function Settings() {
         <section className="space-y-4">
           <h2 className="px-2 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Legal & Compliance</h2>
           <div className="bg-zinc-900/40 border border-white/5 rounded-3xl overflow-hidden divide-y divide-white/5 shadow-xl">
-            <SettingsLink icon={FileText} label="Privacy Policy" color="text-zinc-400" bg="bg-zinc-800" />
-            <SettingsLink icon={FileText} label="Terms of Service" color="text-zinc-400" bg="bg-zinc-800" />
-            <SettingsLink icon={Info} label="About Bingx Copy Trade" color="text-zinc-400" bg="bg-zinc-800" />
+            <div onClick={() => setActiveModal("privacy")}>
+              <SettingsLink icon={FileText} label="Privacy Policy" color="text-zinc-400" bg="bg-zinc-800" />
+            </div>
+            <div onClick={() => setActiveModal("terms")}>
+              <SettingsLink icon={FileText} label="Terms of Service" color="text-zinc-400" bg="bg-zinc-800" />
+            </div>
+            <div onClick={() => setActiveModal("about")}>
+              <SettingsLink icon={Info} label="About BingX Copy Trade" color="text-zinc-400" bg="bg-zinc-800" />
+            </div>
             
             <div className="p-5 flex items-center justify-between bg-white/[0.01]">
                <div className="flex items-center gap-4">
@@ -71,8 +89,8 @@ export default function Settings() {
                   <Smartphone size={20} />
                 </div>
                 <div>
-                  <p className="font-bold text-sm tracking-tight">App Version</p>
-                  <p className="text-xs text-zinc-600">v2.4.0 (Build 2024.01.09)</p>
+                  <p className="font-bold text-sm tracking-tight text-zinc-400">App Version</p>
+                  <p className="text-xs text-zinc-600">v2.4.0 (Build 2026.01.09)</p>
                 </div>
               </div>
               <span className="text-[9px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full tracking-tighter">LATEST</span>
@@ -82,11 +100,54 @@ export default function Settings() {
       </div>
 
       <div className="text-center pt-8">
-        <p className="text-xs text-muted-foreground">
-          © 2026 Bingx Copy Trade Inc.<br/>All rights reserved.
+        <p className="text-xs text-muted-foreground font-medium opacity-50">
+          © 2026 BingX Copy Trade Global.<br/>Secure Trading Environment
         </p>
       </div>
+
+      {/* Modals */}
+      <LegalModal 
+        isOpen={!!activeModal} 
+        onClose={() => setActiveModal(null)} 
+        type={activeModal} 
+      />
     </div>
+  );
+}
+
+function LegalModal({ isOpen, onClose, type }: { isOpen: boolean, onClose: () => void, type: "privacy" | "terms" | "about" | null }) {
+  const content = {
+    privacy: {
+      title: "Privacy Policy",
+      body: "We value your privacy above all. BingX Copy Trade employs military-grade encryption to protect your personal data and trading history. We do not sell your data to third parties. Your account information is strictly used for trade synchronization and security verification purposes. By using our platform, you agree to our data collection and protection standards."
+    },
+    terms: {
+      title: "Terms of Service",
+      body: "By accessing BingX Copy Trade, you acknowledge the inherent risks associated with cryptocurrency trading. Our copy trading service automates trade execution based on master trader signals. We do not guarantee profits and are not responsible for market losses. Users must maintain sufficient margin in their accounts to cover automated positions."
+    },
+    about: {
+      title: "About BingX Copy Trade",
+      body: "BingX Copy Trade is a premier automated trading companion. Our technology bridges the gap between expert market analysts and everyday investors. We provide a seamless, high-performance interface for monitoring your copy trading portfolio in real-time. Our mission is to democratize institutional-grade trading strategies through transparent and secure automation."
+    }
+  }[type || "privacy"];
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-md w-[95%] rounded-[2rem] bg-zinc-950 border-white/5 p-8 backdrop-blur-2xl">
+        <DialogHeader className="mb-4">
+          <DialogTitle className="text-2xl font-black font-display tracking-tight text-white">{content.title}</DialogTitle>
+        </DialogHeader>
+        <ScrollArea className="h-[300px] pr-4">
+          <div className="text-zinc-400 text-sm font-medium leading-relaxed space-y-4">
+            <p>{content.body}</p>
+            <p className="text-zinc-600">Last updated: January 2026</p>
+          </div>
+        </ScrollArea>
+        <Button onClick={onClose} className="w-full mt-6 h-12 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white border border-white/5 font-bold">
+          Close
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 }
 
