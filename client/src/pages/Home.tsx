@@ -4,6 +4,8 @@ import { Eye, EyeOff, TrendingUp, TrendingDown, ArrowUpRight, Activity, PieChart
 import { StatCard } from "@/components/StatCard";
 import { usePortfolio } from "@/hooks/use-portfolio";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const [showBalance, setShowBalance] = useState(true);
