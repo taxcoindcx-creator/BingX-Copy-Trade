@@ -66,7 +66,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Initialize storage
   await initializeStorage();
   
-  const path = req.url || '';
+  // Get the path - Vercel passes the path in the query string when using rewrites
+  let path = req.url || '';
+  // Remove query string
+  path = path.split('?')[0];
+  // If path doesn't start with /api, it might be in the query
+  if (!path.startsWith('/api') && req.query.path) {
+    path = req.query.path as string;
+  }
+  // Ensure path starts with /api
+  if (!path.startsWith('/api')) {
+    path = `/api${path}`;
+  }
   
   // Handle login
   if (path === api.auth.login.path && req.method === 'POST') {
