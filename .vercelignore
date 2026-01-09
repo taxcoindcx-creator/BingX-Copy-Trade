@@ -1,0 +1,8 @@
+node_modules
+.git
+.replit
+replit.md
+server-error.txt
+server-output.txt
+server.log
+*.log

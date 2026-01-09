@@ -54,9 +54,9 @@ function detectDevice(userAgent: string): string {
 }
 
 export async function registerRoutes(
-  httpServer: Server,
+  httpServer: Server | null,
   app: Express
-): Promise<Server> {
+): Promise<Server | void> {
   // Seed data on startup
   await storage.seedData();
 
@@ -100,5 +100,5 @@ export async function registerRoutes(
     })));
   });
 
-  return httpServer;
+  return httpServer || undefined;
 }
