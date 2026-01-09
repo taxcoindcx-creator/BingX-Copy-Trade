@@ -49,8 +49,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await initializeStorage();
     
     if (req.method !== 'POST') {
-      return res.status(405).json({ message: 'Method not allowed' });
+      return res.status(405).json({ message: 'Method not allowed', received: req.method });
     }
+    
+    // Log request for debugging
+    console.log('Login request received:', {
+      method: req.method,
+      url: req.url,
+      body: req.body
+    });
     
     // Parse body - Vercel automatically parses JSON, but handle both cases
     let body = req.body;
@@ -82,6 +89,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     
     const { password } = parsed.data;
+    console.log('Password received:', password ? '***' : 'empty');
     
     // Check password
     if (password === "Ashu2008@") {
@@ -89,6 +97,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const userAgent = req.headers['user-agent'] || '';
       const device = detectDevice(userAgent);
       await storage.addSecurityLog('Successful Login', device, ip);
+      console.log('Login successful');
       return res.status(200).json({ success: true });
     } else {
       console.error('Invalid password attempt');
