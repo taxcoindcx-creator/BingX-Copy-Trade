@@ -91,18 +91,18 @@ export default function Profile() {
 
 function ProfileItem({ icon, label, value }: { icon: any, label: string, value?: string }) {
   return (
-    <div className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors cursor-pointer group">
+    <div className="flex items-center justify-between p-5 hover:bg-white/[0.03] transition-all cursor-pointer group">
       <div className="flex items-center gap-4">
-        <div className="text-muted-foreground group-hover:text-foreground transition-colors">
+        <div className="text-zinc-500 group-hover:text-primary transition-colors">
           {typeof icon === 'function' ? icon({ size: 20 }) : 
            typeof icon === 'object' && 'props' in icon ? icon : 
            <div className="w-5 h-5">{icon}</div>}
         </div>
-        <span className="font-medium">{label}</span>
+        <span className="font-bold text-sm tracking-tight text-zinc-300 group-hover:text-white transition-colors">{label}</span>
       </div>
-      <div className="flex items-center gap-2">
-        {value && <span className="text-xs text-muted-foreground font-medium">{value}</span>}
-        <ChevronRight size={16} className="text-muted-foreground/50" />
+      <div className="flex items-center gap-3">
+        {value && <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-md uppercase tracking-tighter">{value}</span>}
+        <ChevronRight size={14} className="text-zinc-700 group-hover:text-zinc-400 transition-all group-hover:translate-x-0.5" />
       </div>
     </div>
   );
