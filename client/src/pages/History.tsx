@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { format } from "date-fns";
+import { format as formatDate } from "date-fns";
 import { ArrowDownLeft, ArrowUpRight, Calendar, Search, Filter, Download } from "lucide-react";
 import { useTrades } from "@/hooks/use-trades";
 import { Input } from "@/components/ui/input";
@@ -8,11 +8,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useCurrency } from "@/hooks/use-currency";
 
 export default function History() {
   const { data: trades, isLoading } = useTrades();
   const [filter, setFilter] = useState<"all" | "profit" | "loss" | "deposit">("all");
   const { toast } = useToast();
+  const { format } = useCurrency();
 
   if (isLoading) return <HistorySkeleton />;
 
@@ -130,13 +132,13 @@ export default function History() {
                       {isDeposit ? "Deposit" : isProfit ? "Profit" : "Loss"}
                     </p>
                     <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider mt-0.5">
-                      {format(new Date(trade.date), "dd MMM yyyy • HH:mm")}
+                      {formatDate(new Date(trade.date), "dd MMM yyyy • HH:mm")}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className={cn("text-lg font-black tracking-tighter", amountColor)}>
-                    {amountPrefix}${Math.abs(Number(trade.amount)).toLocaleString()}
+                    {amountPrefix}{format(Math.abs(Number(trade.amount)))}
                   </p>
                   <p className="text-[9px] uppercase font-black text-zinc-600 tracking-[0.2em]">
                     USD

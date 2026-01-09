@@ -101,14 +101,14 @@ export default function Home() {
                         key="balance"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-5xl font-black font-display tracking-tighter bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent"
+                        className="text-4xl font-black font-display tracking-tighter bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent sm:text-5xl"
                       >
                         {format(data.totalValue)}
                       </motion.h2>
                     ) : (
                       <motion.h2 
                         key="hidden"
-                        className="text-5xl font-black font-display tracking-tighter text-zinc-800"
+                        className="text-4xl font-black font-display tracking-tighter text-zinc-800 sm:text-5xl"
                       >
                         •••••••
                       </motion.h2>
@@ -226,6 +226,15 @@ function HomeSkeleton() {
 
 function CryptoPriceCard({ symbol, name, price, change, color }: { symbol: string, name: string, price: string, change: string, color: string }) {
   const isUp = change.startsWith("+");
+  const { convert, currency } = useCurrency();
+  
+  // Convert price string back to number for conversion if possible
+  const numericPrice = parseFloat(price.replace(/,/g, ''));
+  const displayPrice = isNaN(numericPrice) ? price : convert(numericPrice).toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
   return (
     <motion.div 
       whileHover={{ y: -5 }}
@@ -241,7 +250,9 @@ function CryptoPriceCard({ symbol, name, price, change, color }: { symbol: strin
           <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-tighter">{name}</p>
         </div>
       </div>
-      <p className="text-lg font-black tracking-tighter text-white">${price}</p>
+      <p className="text-lg font-black tracking-tighter text-white whitespace-nowrap overflow-hidden text-ellipsis">
+        {currency === "INR" ? "₹" : "$"}{displayPrice}
+      </p>
       <div className="flex items-center justify-between mt-1">
         <span className={cn("text-[10px] font-black tracking-widest px-2 py-0.5 rounded-md", isUp ? "bg-[#4ade80]/10 text-[#4ade80]" : "bg-red-500/10 text-red-500")}>
           {change}

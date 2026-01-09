@@ -105,7 +105,7 @@ export default function Profile() {
             <InfoRow icon={<Calendar size={16} />} label="Date of Birth" value="****" />
             <InfoRow icon={<Globe size={16} />} label="Country" value="India (IN)" />
             <InfoRow icon={<CreditCard size={16} />} label="Identity Document" value="Aadhar Card (Verified)" />
-            <InfoRow icon={<Shield size={16} />} label="Tax ID / PAN" value="••••••921Z" />
+            <InfoRow icon={<Shield size={16} />} label="Tax ID / PAN" value="****" />
           </div>
           <p className="mt-8 text-[10px] text-zinc-600 font-bold text-center uppercase tracking-[0.2em] leading-relaxed">
             All personal information is secured and cannot be modified after KYC verification.
