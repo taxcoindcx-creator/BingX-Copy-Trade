@@ -44,53 +44,25 @@ function Router() {
         {/* Authenticated Routes */}
         <Route path="/home">
           <DashboardLayout>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Home />
-            </motion.div>
+            <Home />
           </DashboardLayout>
         </Route>
 
         <Route path="/history">
           <DashboardLayout>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <History />
-            </motion.div>
+            <History />
           </DashboardLayout>
         </Route>
 
         <Route path="/profile">
           <DashboardLayout>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Profile />
-            </motion.div>
+            <Profile />
           </DashboardLayout>
         </Route>
 
         <Route path="/settings">
           <DashboardLayout>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Settings />
-            </motion.div>
+            <Settings />
           </DashboardLayout>
         </Route>
 
