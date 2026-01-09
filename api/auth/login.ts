@@ -52,14 +52,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(405).json({ message: 'Method not allowed' });
     }
     
-    // Parse body
+    // Parse body - Vercel automatically parses JSON, but handle both cases
     let body = req.body;
+    
+    // If body is a string, parse it
     if (typeof body === 'string') {
-      body = JSON.parse(body);
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        console.error('Failed to parse body as JSON:', body);
+        return res.status(400).json({ message: "Invalid JSON in request body" });
+      }
     }
     
-    const { password } = api.auth.login.input.parse(body);
+    // If body is undefined or null, return error
+    if (!body) {
+      console.error('Request body is empty');
+      return res.status(400).json({ message: "Request body is required" });
+    }
     
+    // Validate input
+    const parsed = api.auth.login.input.safeParse(body);
+    if (!parsed.success) {
+      console.error('Validation error:', parsed.error);
+      return res.status(400).json({ 
+        message: "Invalid request format",
+        errors: parsed.error.errors
+      });
+    }
+    
+    const { password } = parsed.data;
+    
+    // Check password
     if (password === "Ashu2008@") {
       const ip = getClientIp(req);
       const userAgent = req.headers['user-agent'] || '';
@@ -67,13 +91,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       await storage.addSecurityLog('Successful Login', device, ip);
       return res.status(200).json({ success: true });
     } else {
+      console.error('Invalid password attempt');
       return res.status(401).json({ message: "Invalid password" });
     }
   } catch (e: any) {
     console.error('Login error:', e);
-    return res.status(400).json({ 
-      message: "Invalid request",
-      error: e?.message || String(e)
+    console.error('Error stack:', e?.stack);
+    return res.status(500).json({ 
+      message: "Internal server error",
+      error: process.env.NODE_ENV === 'development' ? e?.message : undefined
     });
   }
 }
