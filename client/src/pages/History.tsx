@@ -25,23 +25,23 @@ export default function History() {
   };
 
   return (
-    <div className="space-y-6 pb-24 h-full">
+    <div className="space-y-6 pb-24 h-full animate-in fade-in slide-in-from-bottom-4 duration-500">
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 sticky top-0 bg-background/95 backdrop-blur-xl z-20 py-2"
+        className="flex flex-col gap-4 sticky top-0 bg-background/95 backdrop-blur-xl z-20 py-4 -mx-4 px-4 border-b border-white/5"
       >
-        <div className="flex items-center justify-between px-2">
-          <h1 className="text-2xl font-bold font-display">Trade History</h1>
-          <div className="text-xs font-medium px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
-            {trades?.length || 0} Records
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold font-display tracking-tight">Trade History</h1>
+          <div className="text-[10px] uppercase font-bold px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 tracking-widest">
+            {trades?.length || 0} Trades
           </div>
         </div>
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input 
             placeholder="Search trades..." 
-            className="pl-10 bg-secondary/50 border-transparent focus:bg-secondary transition-all rounded-xl"
+            className="pl-10 h-11 bg-zinc-900/50 border-white/5 focus:border-primary/50 focus:ring-0 transition-all rounded-xl"
           />
         </div>
       </motion.div>
@@ -50,7 +50,7 @@ export default function History() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="space-y-3"
+        className="space-y-3 mt-4"
       >
         {trades?.map((trade) => {
           const isProfit = trade.type === 'profit';

@@ -62,14 +62,17 @@ export default function Home() {
 
       {/* Portfolio Card */}
       <motion.div variants={item} className="w-full">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-primary to-indigo-700 p-1 shadow-2xl shadow-primary/25">
-          <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative overflow-hidden rounded-3xl bg-[#0a0a0c] p-1 shadow-2xl shadow-black/50 border border-white/5">
+          {/* Subtle Pattern Overlay */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
           
-          <div className="relative bg-card/10 backdrop-blur-sm rounded-[22px] p-6 text-white overflow-hidden">
+          <div className="relative bg-gradient-to-br from-zinc-900/50 to-black/50 backdrop-blur-md rounded-[22px] p-6 text-white overflow-hidden">
+            <div className="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
+            
             <div className="flex justify-between items-start mb-6">
               <div>
-                <p className="text-blue-100/80 font-medium mb-1 flex items-center gap-2">
-                  <Wallet className="w-4 h-4" /> Total Portfolio Value
+                <p className="text-zinc-400 font-medium mb-1 flex items-center gap-2 text-xs uppercase tracking-widest">
+                  <Wallet className="w-3.5 h-3.5 text-primary" /> Total Portfolio Value
                 </p>
                 <div className="flex items-center gap-3">
                   <AnimatePresence mode="wait">
@@ -79,10 +82,10 @@ export default function Home() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="text-4xl font-bold font-display tracking-tight"
+                        className="text-4xl font-bold font-display tracking-tight text-gradient"
                       >
                         ${data.totalValue.toLocaleString()}
-                        <span className="text-xl font-normal text-blue-200 ml-1">USD</span>
+                        <span className="text-lg font-normal text-zinc-500 ml-1">USD</span>
                       </motion.h2>
                     ) : (
                       <motion.h2 
@@ -90,7 +93,7 @@ export default function Home() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="text-4xl font-bold font-display tracking-tight"
+                        className="text-4xl font-bold font-display tracking-tight text-zinc-700"
                       >
                         •••••••
                       </motion.h2>
@@ -98,32 +101,32 @@ export default function Home() {
                   </AnimatePresence>
                   <button 
                     onClick={() => setShowBalance(!showBalance)}
-                    className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                    className="p-2 rounded-full hover:bg-white/5 transition-colors"
                   >
-                    {showBalance ? <Eye size={20} className="text-blue-200" /> : <EyeOff size={20} className="text-blue-200" />}
+                    {showBalance ? <Eye size={18} className="text-zinc-500" /> : <EyeOff size={18} className="text-zinc-500" />}
                   </button>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/10">
+            <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/5">
               <div>
-                <p className="text-blue-200/70 text-xs mb-1">Net PnL</p>
+                <p className="text-zinc-500 text-[10px] uppercase tracking-wider mb-1">Net PnL</p>
                 <p className="text-xl font-bold text-[#4ade80] flex items-center gap-1">
                   +${data.netPnL.toLocaleString()} <ArrowUpRight className="w-4 h-4" />
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-blue-200/70 text-xs mb-1">All Time Profit</p>
+                <p className="text-zinc-500 text-[10px] uppercase tracking-wider mb-1">All Time Profit</p>
                 <p className="text-xl font-bold text-white">
                   ${data.allTimeProfit.toLocaleString()}
                 </p>
               </div>
             </div>
             
-            <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center text-xs text-blue-200/60">
+            <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center text-[10px] font-medium text-zinc-500 uppercase tracking-widest">
                <span>Initial Deposit: ${data.initialDeposit}</span>
-               <span className="bg-white/10 px-2 py-1 rounded-md">Verified</span>
+               <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full border border-primary/20">Verified</span>
             </div>
           </div>
         </div>

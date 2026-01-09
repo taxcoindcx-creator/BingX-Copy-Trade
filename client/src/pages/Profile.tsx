@@ -23,37 +23,38 @@ export default function Profile() {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="space-y-8 pb-24 pt-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-8 pb-24 pt-4 px-2"
     >
       <div className="flex flex-col items-center text-center space-y-4">
         <div className="relative">
-          <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-primary to-blue-400 p-1 shadow-2xl shadow-primary/20">
-             <Avatar className="w-full h-full border-4 border-background">
-                <AvatarImage src="https://github.com/shadcn.png" /> {/* Placeholder fallback */}
-                <AvatarFallback className="bg-secondary text-2xl font-bold">AD</AvatarFallback>
+          <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-primary to-blue-400 p-0.5 shadow-2xl shadow-primary/20">
+             <Avatar className="w-full h-full border-[6px] border-background">
+                <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Abhisek" />
+                <AvatarFallback className="bg-zinc-900 text-2xl font-bold">AD</AvatarFallback>
              </Avatar>
           </div>
-          <div className="absolute bottom-1 right-1 bg-[var(--success)] text-black rounded-full p-1.5 border-4 border-background">
+          <div className="absolute bottom-1 right-1 bg-[#4ade80] text-black rounded-full p-1.5 border-4 border-background">
             <CheckCircle2 size={16} strokeWidth={3} />
           </div>
         </div>
         
         <div>
-          <h1 className="text-2xl font-bold font-display">Abhisek Das</h1>
-          <p className="text-muted-foreground">ID: 89439201</p>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--success)]/10 text-[var(--success)] text-xs font-bold mt-3 border border-[var(--success)]/20">
-            <Shield size={12} />
+          <h1 className="text-3xl font-bold font-display tracking-tight">Abhisek Das</h1>
+          <p className="text-zinc-500 text-sm font-medium mt-1">Trader ID: 89439201</p>
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#4ade80]/10 text-[#4ade80] text-[10px] font-black mt-4 border border-[#4ade80]/20 tracking-widest uppercase">
+            <Shield size={12} strokeWidth={3} />
             KYC VERIFIED
           </div>
         </div>
       </div>
 
       <div className="space-y-4">
-        <div className="glass-card rounded-2xl overflow-hidden">
-          <div className="p-4 border-b border-white/5">
-            <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Account</h3>
+        <div className="bg-zinc-900/40 border border-white/5 rounded-3xl overflow-hidden backdrop-blur-sm">
+          <div className="p-5 border-b border-white/5 bg-white/[0.02]">
+            <h3 className="font-bold text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Account Management</h3>
           </div>
           <div className="divide-y divide-white/5">
             <ProfileItem icon={<UserIcon />} label="Personal Information" />
@@ -64,21 +65,21 @@ export default function Profile() {
 
         <Button 
           onClick={handleContact}
-          className="w-full h-14 bg-card hover:bg-secondary text-foreground border border-white/10 rounded-2xl flex items-center justify-between px-6 group transition-all"
+          className="w-full h-16 bg-zinc-900/40 hover:bg-zinc-800/60 text-foreground border border-white/5 rounded-3xl flex items-center justify-between px-6 group transition-all backdrop-blur-sm shadow-xl"
         >
-          <span className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+          <span className="flex items-center gap-4">
+            <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
               <Mail size={20} />
             </div>
-            <span className="font-semibold">Contact Admin</span>
+            <span className="font-bold text-sm tracking-tight">Contact Admin</span>
           </span>
-          <ChevronRight className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
+          <ChevronRight className="text-zinc-600 group-hover:translate-x-1 transition-transform" />
         </Button>
 
         <Button 
           onClick={handleLogout}
-          variant="destructive"
-          className="w-full h-14 rounded-2xl flex items-center justify-center gap-2 mt-8 font-semibold shadow-lg shadow-red-900/20"
+          variant="ghost"
+          className="w-full h-14 rounded-2xl flex items-center justify-center gap-2 mt-8 font-bold text-zinc-500 hover:text-red-500 hover:bg-red-500/5 transition-all"
         >
           <LogOut size={20} />
           Sign Out
