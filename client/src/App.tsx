@@ -31,12 +31,9 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
 function Router() {
   const [location] = useLocation();
 
-  // Simple location-based animation key
-  // This allows pages to cross-fade nicely
-  
   return (
     <AnimatePresence mode="wait">
-      <Switch location={location} key={location}>
+      <Switch>
         <Route path="/">
           <Login />
         </Route>
