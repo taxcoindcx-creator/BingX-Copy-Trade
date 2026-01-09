@@ -1,21 +1,47 @@
-import { db } from "./db";
-import { trades, type Trade, type InsertTrade, type PortfolioSummary } from "@shared/schema";
-import { desc } from "drizzle-orm";
+import type { Trade, InsertTrade, PortfolioSummary } from "@shared/schema";
+
+export interface SecurityLog {
+  id: number;
+  date: Date;
+  action: string;
+  device: string;
+  ip: string;
+}
 
 export interface IStorage {
   getTrades(): Promise<Trade[]>;
   createTrade(trade: InsertTrade): Promise<Trade>;
   getPortfolioSummary(): Promise<PortfolioSummary>;
   seedData(): Promise<void>;
+  addSecurityLog(action: string, device: string, ip: string): Promise<SecurityLog>;
+  getSecurityLogs(): Promise<SecurityLog[]>;
 }
 
-export class DatabaseStorage implements IStorage {
+export class MemoryStorage implements IStorage {
+  private trades: Trade[] = [];
+  private securityLogs: SecurityLog[] = [];
+  private nextId = 1;
+  private nextLogId = 1;
+
   async getTrades(): Promise<Trade[]> {
-    return await db.select().from(trades).orderBy(desc(trades.date));
+    // Return trades sorted by date (newest first)
+    return [...this.trades].sort((a, b) => {
+      const dateA = typeof a.date === 'string' ? new Date(a.date) : a.date;
+      const dateB = typeof b.date === 'string' ? new Date(b.date) : b.date;
+      return dateB.getTime() - dateA.getTime();
+    });
   }
 
   async createTrade(trade: InsertTrade): Promise<Trade> {
-    const [newTrade] = await db.insert(trades).values(trade).returning();
+    const newTrade: Trade = {
+      id: this.nextId++,
+      date: trade.date,
+      amount: trade.amount,
+      type: trade.type,
+      status: trade.status,
+      description: trade.description || null,
+    };
+    this.trades.push(newTrade);
     return newTrade;
   }
 
@@ -33,9 +59,28 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
+  async addSecurityLog(action: string, device: string, ip: string): Promise<SecurityLog> {
+    const log: SecurityLog = {
+      id: this.nextLogId++,
+      date: new Date(),
+      action,
+      device,
+      ip,
+    };
+    this.securityLogs.unshift(log); // Add to beginning
+    // Keep only last 50 logs
+    if (this.securityLogs.length > 50) {
+      this.securityLogs = this.securityLogs.slice(0, 50);
+    }
+    return log;
+  }
+
+  async getSecurityLogs(): Promise<SecurityLog[]> {
+    return [...this.securityLogs];
+  }
+
   async seedData(): Promise<void> {
-    const existing = await this.getTrades();
-    if (existing.length === 0) {
+    if (this.trades.length === 0) {
       const initialTrades: InsertTrade[] = [
         { date: new Date("2026-01-06"), amount: "617", type: "profit", status: "closed", description: "Profit" },
         { date: new Date("2025-11-25"), amount: "518", type: "profit", status: "closed", description: "Profit" },
@@ -56,4 +101,4 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new MemoryStorage();

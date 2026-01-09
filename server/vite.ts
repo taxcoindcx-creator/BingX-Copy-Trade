@@ -4,7 +4,11 @@ import { type Server } from "http";
 import viteConfig from "../vite.config";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import { nanoid } from "nanoid";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const viteLogger = createLogger();
 
@@ -15,8 +19,9 @@ export async function setupVite(server: Server, app: Express) {
     allowedHosts: true as const,
   };
 
+  const config = await viteConfig();
   const vite = await createViteServer({
-    ...viteConfig,
+    ...config,
     configFile: false,
     customLogger: {
       ...viteLogger,
@@ -31,12 +36,17 @@ export async function setupVite(server: Server, app: Express) {
 
   app.use(vite.middlewares);
 
-  app.use("*", async (req, res, next) => {
+  app.get("*", async (req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith("/api") || req.path.startsWith("/vite-hmr")) {
+      return next();
+    }
+
     const url = req.originalUrl;
 
     try {
       const clientTemplate = path.resolve(
-        import.meta.dirname,
+        __dirname,
         "..",
         "client",
         "index.html",

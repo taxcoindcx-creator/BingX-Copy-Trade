@@ -64,14 +64,38 @@ export default function Login() {
         <div className="w-full space-y-4">
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button 
-                size="lg"
-                className="w-full h-16 text-lg font-semibold rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] transition-all duration-300 group bg-primary hover:bg-primary/90"
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full cursor-pointer"
               >
-                <Wallet className="mr-2 w-5 h-5 group-hover:animate-pulse" />
-                Track your wallet
-                <ChevronRight className="ml-auto w-5 h-5 opacity-70" />
-              </Button>
+                <div className="relative overflow-hidden rounded-[2.5rem] bg-[#0a0a0c] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/5 group">
+                  {/* Animated Background Glow */}
+                  <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-[100px] animate-pulse group-hover:bg-primary/30 transition-all duration-700" />
+                  <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] animate-pulse delay-700 group-hover:bg-blue-500/20 transition-all duration-700" />
+                  
+                  <div className="relative bg-gradient-to-br from-zinc-900/80 via-black/90 to-zinc-900/80 backdrop-blur-2xl rounded-[2.2rem] p-6 sm:p-8 text-white overflow-hidden border border-white/10">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
+                          <Wallet className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-zinc-500 font-black mb-1 text-[10px] uppercase tracking-[0.2em]">Access Your Portfolio</p>
+                          <h3 className="text-xl sm:text-2xl font-black font-display tracking-tight bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">
+                            Track your wallet
+                          </h3>
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <div className="p-3 rounded-full bg-white/5 hover:bg-white/10 transition-all border border-white/5 group-hover:border-primary/50">
+                          <ChevronRight className="w-5 h-5 text-zinc-400 group-hover:text-primary transition-colors" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md bg-card border-white/10 p-0 overflow-hidden gap-0 rounded-3xl">
               <div className="p-6 pb-0">

@@ -41,6 +41,21 @@ export const api = {
         200: z.array(z.custom<typeof trades.$inferSelect>())
       }
     }
+  },
+  security: {
+    logs: {
+      method: 'GET' as const,
+      path: '/api/security/logs',
+      responses: {
+        200: z.array(z.object({
+          id: z.number(),
+          date: z.string(),
+          action: z.string(),
+          device: z.string(),
+          ip: z.string()
+        }))
+      }
+    }
   }
 };
 

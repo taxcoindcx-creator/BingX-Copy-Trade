@@ -88,27 +88,27 @@ export default function Home() {
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-[100px] animate-pulse group-hover:bg-primary/30 transition-all duration-700" />
           <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] animate-pulse delay-700 group-hover:bg-blue-500/20 transition-all duration-700" />
           
-          <div className="relative bg-gradient-to-br from-zinc-900/80 via-black/90 to-zinc-900/80 backdrop-blur-2xl rounded-[2.2rem] p-8 text-white overflow-hidden border border-white/10">
-            <div className="flex justify-between items-start mb-8">
-              <div>
+          <div className="relative bg-gradient-to-br from-zinc-900/80 via-black/90 to-zinc-900/80 backdrop-blur-2xl rounded-[2.2rem] p-4 sm:p-8 text-white overflow-hidden border border-white/10">
+            <div className="flex justify-between items-start mb-6 sm:mb-8 gap-2">
+              <div className="flex-1 min-w-0">
                 <p className="text-zinc-500 font-black mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em]">
                   <Wallet className="w-3.5 h-3.5 text-primary" /> Net Portfolio Balance
                 </p>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                   <AnimatePresence mode="wait">
                     {showBalance ? (
                       <motion.h2 
                         key="balance"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-4xl font-black font-display tracking-tighter bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent sm:text-5xl"
+                        className="text-2xl sm:text-4xl font-black font-display tracking-tighter bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent break-words"
                       >
                         {format(data.totalValue)}
                       </motion.h2>
                     ) : (
                       <motion.h2 
                         key="hidden"
-                        className="text-4xl font-black font-display tracking-tighter text-zinc-800 sm:text-5xl"
+                        className="text-2xl sm:text-4xl font-black font-display tracking-tighter text-zinc-800"
                       >
                         •••••••
                       </motion.h2>
@@ -118,31 +118,31 @@ export default function Home() {
                     variant="ghost" 
                     size="icon"
                     onClick={() => setShowBalance(!showBalance)}
-                    className="h-10 w-10 rounded-full bg-white/5 hover:bg-white/10 transition-all border border-white/5"
+                    className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/5 hover:bg-white/10 transition-all border border-white/5 flex-shrink-0"
                   >
-                    {showBalance ? <EyeOff size={18} className="text-zinc-400" /> : <Eye size={18} className="text-zinc-400" />}
+                    {showBalance ? <EyeOff size={16} className="text-zinc-400 sm:w-[18px] sm:h-[18px]" /> : <Eye size={16} className="text-zinc-400 sm:w-[18px] sm:h-[18px]" />}
                   </Button>
                 </div>
               </div>
-              <div className="flex flex-col items-end">
-                <div className="px-3 py-1 rounded-full bg-[#4ade80]/10 border border-[#4ade80]/20 text-[#4ade80] text-[10px] font-black tracking-widest uppercase mb-2">
+              <div className="flex flex-col items-end flex-shrink-0">
+                <div className="px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-[#4ade80]/10 border border-[#4ade80]/20 text-[#4ade80] text-[9px] sm:text-[10px] font-black tracking-widest uppercase mb-1 sm:mb-2">
                   Live
                 </div>
-                <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{currency} Account</div>
+                <div className="text-[9px] sm:text-[10px] font-bold text-zinc-500 uppercase tracking-widest whitespace-nowrap">{currency} Account</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 mt-4 p-6 bg-white/[0.03] rounded-3xl border border-white/5">
-              <div>
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 mt-4 p-4 sm:p-6 bg-white/[0.03] rounded-3xl border border-white/5">
+              <div className="min-w-0">
                 <p className="text-zinc-500 text-[9px] font-black uppercase tracking-[0.2em] mb-1.5">Net PnL (Total)</p>
-                <p className="text-2xl font-black text-[#4ade80] flex items-center gap-1.5 tracking-tighter">
-                  {format(data.netPnL)} 
-                  <span className="text-xs bg-[#4ade80]/20 px-1.5 py-0.5 rounded-md">+{( (data.netPnL/data.initialDeposit)*100 ).toFixed(1)}%</span>
+                <p className="text-lg sm:text-2xl font-black text-[#4ade80] flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-1.5 tracking-tighter">
+                  <span className="break-words">{format(data.netPnL)}</span>
+                  <span className="text-[10px] sm:text-xs bg-[#4ade80]/20 px-1.5 py-0.5 rounded-md whitespace-nowrap">+{( (data.netPnL/data.initialDeposit)*100 ).toFixed(1)}%</span>
                 </p>
               </div>
-              <div className="text-right">
+              <div className="text-right min-w-0">
                 <p className="text-zinc-500 text-[9px] font-black uppercase tracking-[0.2em] mb-1.5">All Time Profit</p>
-                <p className="text-2xl font-black text-white tracking-tighter">
+                <p className="text-lg sm:text-2xl font-black text-white tracking-tighter break-words">
                   {format(data.allTimeProfit)}
                 </p>
               </div>

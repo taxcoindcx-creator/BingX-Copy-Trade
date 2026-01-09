@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, CheckCircle2, Shield, ChevronRight, LogOut, Phone, User as UserIcon, Calendar, Globe, CreditCard, History as HistoryIcon, MapPin, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,11 +6,22 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { api } from "@shared/routes";
+
+interface SecurityLog {
+  id: number;
+  date: string;
+  action: string;
+  device: string;
+  ip: string;
+}
 
 export default function Profile() {
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
   const [activeDialog, setActiveDialog] = useState<"personal" | "security" | null>(null);
+  const [securityLogs, setSecurityLogs] = useState<SecurityLog[]>([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
 
   const handleContact = () => {
     toast({
@@ -23,6 +34,30 @@ export default function Profile() {
   const handleLogout = () => {
     setLocation("/");
   };
+
+  const fetchSecurityLogs = async () => {
+    setLoadingLogs(true);
+    try {
+      const response = await fetch(api.security.logs.path);
+      if (response.ok) {
+        const logs = await response.json();
+        setSecurityLogs(logs);
+      }
+    } catch (error) {
+      console.error("Failed to fetch security logs:", error);
+    } finally {
+      setLoadingLogs(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeDialog === "security") {
+      fetchSecurityLogs();
+      // Refresh logs every 5 seconds when dialog is open
+      const interval = setInterval(fetchSecurityLogs, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [activeDialog]);
 
   return (
     <motion.div 
@@ -119,11 +154,21 @@ export default function Profile() {
             <DialogTitle className="text-2xl font-black font-display tracking-tight text-white">Security Logs</DialogTitle>
             <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-1">Recent Account Activities</p>
           </DialogHeader>
-          <div className="space-y-4">
-            <LogEntry date="Today, 12:45 PM" action="Successful Login" device="iPhone 15 Pro • IP: 103.24.***" />
-            <LogEntry date="Yesterday, 09:12 PM" action="Two-Factor Verified" device="Mobile App • Kolkata, IN" />
-            <LogEntry date="07 Jan 2026, 11:20 AM" action="API Key Created" device="Desktop Browser • Chrome/Win" />
-            <LogEntry date="05 Jan 2026, 04:30 PM" action="Password Changed" device="iPhone 15 Pro • IP: 103.24.***" />
+          <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+            {loadingLogs && securityLogs.length === 0 ? (
+              <div className="text-center py-8 text-zinc-500 text-sm">Loading logs...</div>
+            ) : securityLogs.length === 0 ? (
+              <div className="text-center py-8 text-zinc-500 text-sm">No security logs yet</div>
+            ) : (
+              securityLogs.map((log) => (
+                <LogEntry 
+                  key={log.id}
+                  date={formatLogDate(log.date)} 
+                  action={log.action} 
+                  device={`${log.device} • IP: ${log.ip}`} 
+                />
+              ))
+            )}
           </div>
           <Button variant="ghost" className="w-full mt-4 text-[10px] font-black uppercase tracking-widest text-primary">
             View All Logs
@@ -146,16 +191,33 @@ function InfoRow({ icon, label, value }: { icon: any, label: string, value: stri
   );
 }
 
+function formatLogDate(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+  if (diffDays === 1) return 'Yesterday, ' + date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  if (diffDays < 7) return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+
 function LogEntry({ date, action, device }: { date: string, action: string, device: string }) {
   return (
     <div className="p-4 bg-white/[0.02] rounded-2xl border border-white/5 flex gap-4">
       <div className="p-2 h-fit bg-primary/10 rounded-xl text-primary">
         <Key size={16} />
       </div>
-      <div>
+      <div className="flex-1 min-w-0">
         <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-1">{date}</p>
         <p className="text-sm font-bold text-zinc-200">{action}</p>
-        <p className="text-xs text-zinc-500 mt-0.5">{device}</p>
+        <p className="text-xs text-zinc-500 mt-0.5 break-words">{device}</p>
       </div>
     </div>
   );
