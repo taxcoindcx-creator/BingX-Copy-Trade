@@ -35,24 +35,45 @@ async function initializeStorage() {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  await initializeStorage();
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
   
   try {
-    const { password } = api.auth.login.input.parse(req.body);
+    await initializeStorage();
+    
+    if (req.method !== 'POST') {
+      return res.status(405).json({ message: 'Method not allowed' });
+    }
+    
+    // Parse body
+    let body = req.body;
+    if (typeof body === 'string') {
+      body = JSON.parse(body);
+    }
+    
+    const { password } = api.auth.login.input.parse(body);
+    
     if (password === "Ashu2008@") {
       const ip = getClientIp(req);
       const userAgent = req.headers['user-agent'] || '';
       const device = detectDevice(userAgent);
       await storage.addSecurityLog('Successful Login', device, ip);
-      return res.json({ success: true });
+      return res.status(200).json({ success: true });
     } else {
       return res.status(401).json({ message: "Invalid password" });
     }
-  } catch (e) {
-    return res.status(400).json({ message: "Invalid request" });
+  } catch (e: any) {
+    console.error('Login error:', e);
+    return res.status(400).json({ 
+      message: "Invalid request",
+      error: e?.message || String(e)
+    });
   }
 }
